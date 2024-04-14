@@ -1,4 +1,4 @@
-package models;
+package br.ufsm.csi.CareSync.models;
 
 import java.sql.Date;
 import java.util.UUID;
