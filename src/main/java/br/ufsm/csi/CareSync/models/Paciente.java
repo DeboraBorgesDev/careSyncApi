@@ -18,7 +18,7 @@ import jakarta.persistence.TemporalType;
 public class Paciente {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "uuid", updatable = false)
     private UUID id;
 

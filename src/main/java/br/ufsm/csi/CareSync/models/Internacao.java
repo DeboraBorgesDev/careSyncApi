@@ -20,7 +20,7 @@ import jakarta.persistence.TemporalType;
 public class Internacao {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "uuid", updatable = false)
     private UUID id;
 
@@ -29,11 +29,11 @@ public class Internacao {
     private Paciente paciente;
 
     @Column(name = "data_entrada")
-    @Temporal(TemporalType.TIMESTAMP)
+    
     private Date dataEntrada;
 
     @Column(name = "data_saida")
-    @Temporal(TemporalType.TIMESTAMP)
+    
     private Date dataSaida;
 
     @Column(name = "motivo", columnDefinition = "TEXT")

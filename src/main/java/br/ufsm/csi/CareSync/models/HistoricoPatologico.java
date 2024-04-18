@@ -21,7 +21,7 @@ import jakarta.persistence.TemporalType;
 public class HistoricoPatologico {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "uuid", updatable = false)
     private UUID id;
 
@@ -66,7 +66,7 @@ public class HistoricoPatologico {
     private String alergias;
 
     @Column(name = "data_atualizacao")
-    @Temporal(TemporalType.TIMESTAMP)
+    
     private Date dataAtualizacao;
 
     public HistoricoPatologico(UUID id, Paciente paciente, String queixaPrincipal, String historiaDoencaAtual,

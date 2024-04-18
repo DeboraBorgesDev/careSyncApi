@@ -1,6 +1,7 @@
 package br.ufsm.csi.CareSync.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,14 +19,14 @@ import lombok.Setter;
 @Table(name = "permissao")
 public class Permissao {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
-    private Long id;
+    private UUID id;
 
     @Column
     private String nome;
 
-    public Permissao(Long id, String nome) {
+    public Permissao(UUID id, String nome) {
         this.id = id;
         this.nome = nome;
     }

@@ -24,7 +24,7 @@ import lombok.Setter;
 public class SinaisVitais {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "uuid", updatable = false)
     private UUID id;
 
@@ -37,7 +37,7 @@ public class SinaisVitais {
     private Usuario profissional;
 
     @Column(name = "data_hora")
-    @Temporal(TemporalType.TIMESTAMP)
+    
     private Date dataHora;
 
     @Column(name = "freq_cardiaca")
