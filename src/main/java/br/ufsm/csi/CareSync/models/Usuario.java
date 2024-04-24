@@ -20,7 +20,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "usuario")
+@Table(name = "usuarios")
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,7 +36,7 @@ public class Usuario {
     @Column(nullable = false)
     private String senha;
 
-    @Column
+    @Column(name = "is_medico")
     private boolean isMedico;
 
     @Column(length = 20)
@@ -45,13 +45,13 @@ public class Usuario {
     @Column(length = 14)
     private String cpf;
 
-    @Column
+    @Column(name = "is_enfermeiro")
     private boolean isEnfermeiro;
 
     @Column(length = 20)
     private String coren;
 
-    @Column
+    @Column(name = "is_estudante")
     private boolean isEstudante;
 
     @Column(length = 20)
@@ -61,9 +61,8 @@ public class Usuario {
     @JoinColumn(name = "id_permissao")
     private Permissao permissao;
 
-    public Usuario(UUID id, String nome, String email, String senha, boolean isMedico, String crm, String cpf,
+    public Usuario( String nome, String email, String senha, boolean isMedico, String crm, String cpf,
             boolean isEnfermeiro, String coren, boolean isEstudante, String matricula, Permissao permissao) {
-        this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;

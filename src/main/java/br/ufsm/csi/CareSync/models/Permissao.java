@@ -23,7 +23,7 @@ public class Permissao {
     @Column
     private UUID id;
 
-    @Column
+@Column(name = "nome_permissao")
     private String nome;
 
     public Permissao(UUID id, String nome) {
