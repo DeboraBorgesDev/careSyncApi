@@ -9,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +25,8 @@ public class Permissao {
     @Column
     private UUID id;
 
+@NotBlank
+@NotNull
 @Column(name = "nome_permissao")
     private String nome;
 
