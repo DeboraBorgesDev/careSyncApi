@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import br.ufsm.csi.CareSync.exceptions.ApiError;
 import br.ufsm.csi.CareSync.exceptions.GenericException;
 import br.ufsm.csi.CareSync.exceptions.NotFoundException;
 import br.ufsm.csi.CareSync.models.Permissao;

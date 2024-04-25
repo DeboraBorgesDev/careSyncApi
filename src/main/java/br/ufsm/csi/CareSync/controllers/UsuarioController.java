@@ -35,7 +35,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editarUsuario(@PathVariable UUID id, @RequestBody UsuarioForm userForm) {
+    public ResponseEntity<?> editarUsuario(@PathVariable UUID id, @Valid @RequestBody UsuarioForm userForm) {
         return usuarioService.editarUsuario(id, userForm );
     }
 

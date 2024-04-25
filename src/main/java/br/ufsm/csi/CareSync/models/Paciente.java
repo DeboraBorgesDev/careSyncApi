@@ -12,9 +12,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "paciente")
+@Getter
+@Setter
 public class Paciente {
 
     @Id
@@ -50,15 +54,8 @@ public class Paciente {
     @Column(name = "nivel_ensino", length = 50)
     private String nivelEnsino;
 
-    @Column(name = "possui_acompanhante")
-    private Boolean possuiAcompanhante;
-
-    @Column(name = "nome_acompanhante", length = 255)
-    private String nomeAcompanhante;
-
     public Paciente(UUID id, String nome, Date dataNascimento, String cpf, String sexo, String estadoCivil,
-            Boolean possuiFilhos, String profissao, String religiao, String nivelEnsino, Boolean possuiAcompanhante,
-            String nomeAcompanhante) {
+            Boolean possuiFilhos, String profissao, String religiao, String nivelEnsino) {
         this.id = id;
         this.nome = nome;
         this.dataNascimento = dataNascimento;
@@ -69,8 +66,6 @@ public class Paciente {
         this.profissao = profissao;
         this.religiao = religiao;
         this.nivelEnsino = nivelEnsino;
-        this.possuiAcompanhante = possuiAcompanhante;
-        this.nomeAcompanhante = nomeAcompanhante;
     }
 
     public Paciente() {}
