@@ -37,7 +37,7 @@ public class PacienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editarPaciente(@PathVariable UUID id, @Valid @RequestBody PacienteForm pacienteDTO) {
+    public ResponseEntity<?> editarPaciente(@PathVariable UUID id, @RequestBody PacienteForm pacienteDTO) {
         return pacienteService.editarPaciente(id, pacienteDTO);
     }
 
