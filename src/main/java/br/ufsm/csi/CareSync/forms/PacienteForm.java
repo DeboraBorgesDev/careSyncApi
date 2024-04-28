@@ -28,6 +28,7 @@ public class PacienteForm {
     @NotBlank(message = "O cpf é obrigatório")
     private String cpf;
 
+    
     @Size(max = 1)
     @NotNull(message = "O gênero é obrigatório")
     @NotBlank(message = "O gênero é obrigatório")
