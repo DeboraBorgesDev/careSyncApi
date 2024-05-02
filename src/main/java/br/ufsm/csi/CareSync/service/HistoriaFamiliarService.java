@@ -99,7 +99,6 @@ public class HistoriaFamiliarService {
                     hf.setHistoricoSaudeParentes(historiaFamiliarForm.getHistoricoSaudeParentes());
                 }
 
-
                 HistoriaFamiliar savedHistoria = historiaFamiliarRepository.save(hf);
                 return ResponseEntity.ok(savedHistoria);
             } else {

@@ -1,7 +1,7 @@
 package br.ufsm.csi.CareSync.models;
 
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -13,9 +13,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "historico_patologico")
+@Setter
+@Getter
 public class HistoricoPatologico {
 
     @Id
@@ -23,7 +27,7 @@ public class HistoricoPatologico {
     @Column(columnDefinition = "uuid", updatable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_paciente")
     private Paciente paciente;
 
@@ -64,13 +68,12 @@ public class HistoricoPatologico {
     private String alergias;
 
     @Column(name = "data_atualizacao")
-    
-    private Date dataAtualizacao;
+    private LocalDateTime dataAtualizacao = LocalDateTime.now();
 
     public HistoricoPatologico(UUID id, Paciente paciente, String queixaPrincipal, String historiaDoencaAtual,
             Boolean possuiDiabetes, Boolean possuiHipertensao, Boolean possuiDislipidemia, Boolean medicacaoContinua,
             String medicacoes, Boolean internadoAnteriormente, Boolean cirurgiasAnteriormente,
-            String cirurgiasAnterioresObservacoes, String vacinas, String alergias, Date dataAtualizacao) {
+            String cirurgiasAnterioresObservacoes, String vacinas, String alergias, LocalDateTime dataAtualizacao) {
         this.id = id;
         this.paciente = paciente;
         this.queixaPrincipal = queixaPrincipal;
