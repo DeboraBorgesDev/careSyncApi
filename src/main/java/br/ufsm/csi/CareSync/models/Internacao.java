@@ -1,6 +1,6 @@
 package br.ufsm.csi.CareSync.models;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -12,9 +12,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "internacao")
+@Getter
+@Setter
 public class Internacao {
 
     @Id
@@ -22,17 +26,17 @@ public class Internacao {
     @Column(columnDefinition = "uuid", updatable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_paciente")
     private Paciente paciente;
 
     @Column(name = "data_entrada")
     
-    private Date dataEntrada;
+    private LocalDateTime dataEntrada;
 
     @Column(name = "data_saida")
     
-    private Date dataSaida;
+    private LocalDateTime dataSaida;
 
     @Column(name = "motivo", columnDefinition = "TEXT")
     private String motivo;
@@ -43,12 +47,10 @@ public class Internacao {
     @Column(name = "observacoes", columnDefinition = "TEXT")
     private String observacoes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_medico")
     private Usuario medico;
 
-    // Construtores, getters e setters
     public Internacao() {}
 
-    // getters e setters
 }

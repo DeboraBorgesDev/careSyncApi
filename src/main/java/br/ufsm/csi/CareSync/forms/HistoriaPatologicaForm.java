@@ -1,6 +1,5 @@
 package br.ufsm.csi.CareSync.forms;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
