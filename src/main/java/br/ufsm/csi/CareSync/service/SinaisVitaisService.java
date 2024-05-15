@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import br.ufsm.csi.CareSync.exceptions.NotFoundException;
 import br.ufsm.csi.CareSync.forms.SinaisForm;
 import br.ufsm.csi.CareSync.models.Paciente;
@@ -14,6 +15,7 @@ import br.ufsm.csi.CareSync.repository.SinaisVitaisRepository;
 import br.ufsm.csi.CareSync.repository.UsuarioRepository;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,114 +32,76 @@ public class SinaisVitaisService {
 
     public ResponseEntity<SinaisVitais> registrarSinais(SinaisForm sinaisForm) {
         try {
-            Paciente paciente = pacienteRepository.findById(sinaisForm.getIdPaciente())
-                    .orElseThrow(() -> new NotFoundException("Paciente não encontrado com o ID fornecido"));
+            Optional<Paciente> optionalPaciente = pacienteRepository.findById(sinaisForm.getIdPaciente());
+            if (!optionalPaciente.isPresent()) {
+                throw new NotFoundException("Paciente não encontrado com o ID fornecido");
+            }
+            Paciente paciente = optionalPaciente.get();
 
-            Usuario profissional = usuarioRepository.findById(sinaisForm.getIdProfissional())
-                    .orElseThrow(() -> new NotFoundException("Profissional não encontrado com o ID fornecido"));
+            Optional<Usuario> optionalProfissional = usuarioRepository.findById(sinaisForm.getIdProfissional());
+            if (!optionalProfissional.isPresent()) {
+                throw new NotFoundException("Profissional não encontrado com o ID fornecido");
+            }
+            Usuario profissional = optionalProfissional.get();
 
-            SinaisVitais sinaisVitais = new SinaisVitais();
-            sinaisVitais.setPaciente(paciente);
-            sinaisVitais.setProfissional(profissional);
-            sinaisVitais.setFreqCardiaca(sinaisForm.getFreqCardiaca());
-            sinaisVitais.setFreqRespiratoria(sinaisForm.getFreqRespiratoria());
-            sinaisVitais.setPressaoArterial(sinaisForm.getPressaoArterial());
-            sinaisVitais.setConstipacao(sinaisForm.getConstipacao());
-            sinaisVitais.setGlicemia(sinaisForm.getGlicemia());
-            sinaisVitais.setTemperatura(sinaisForm.getTemperatura());
-            sinaisVitais.setOxigenacao(sinaisForm.getOxigenacao());
-            sinaisVitais.setPeso(sinaisForm.getPeso());
-            sinaisVitais.setMobilidade(sinaisForm.getMobilidade());
-            sinaisVitais.setObservacoes(sinaisForm.getObservacoes());
+            SinaisVitais sinaisVitais = sinaisForm.toSinaisVitais(paciente, profissional);
 
             SinaisVitais savedSinais = sinaisVitaisRepository.save(sinaisVitais);
-            return new ResponseEntity<>(savedSinais, HttpStatus.CREATED);
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedSinais);
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     public ResponseEntity<ArrayList<SinaisVitais>> listarSinaisPorPaciente(UUID idPaciente) {
         try {
             ArrayList<SinaisVitais> sinais = sinaisVitaisRepository.findByIdPaciente(idPaciente);
-            return new ResponseEntity<>(sinais, HttpStatus.OK);
+            return ResponseEntity.ok(sinais);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     public ResponseEntity<SinaisVitais> buscarSinaisPorId(UUID id) {
         try {
-            SinaisVitais sinaisVitais = sinaisVitaisRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException("Sinais vitais não encontrados com o ID fornecido"));
-            return new ResponseEntity<>(sinaisVitais, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Optional<SinaisVitais> optionalSinais = sinaisVitaisRepository.findById(id);
+            if (!optionalSinais.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+            SinaisVitais sinaisVitais = optionalSinais.get();
+            return ResponseEntity.ok(sinaisVitais);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     public ResponseEntity<Void> deletarSinais(UUID id) {
         try {
             sinaisVitaisRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     public ResponseEntity<SinaisVitais> atualizarSinais(UUID id, SinaisForm sinaisForm) {
         try {
-            SinaisVitais sinaisVitais = sinaisVitaisRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException("Sinais vitais não encontrados com o ID fornecido"));
-
-            if (sinaisForm.getFreqCardiaca() != null) {
-                sinaisVitais.setFreqCardiaca(sinaisForm.getFreqCardiaca());
+            Optional<SinaisVitais> optionalSinais = sinaisVitaisRepository.findById(id);
+            if (!optionalSinais.isPresent()) {
+                return ResponseEntity.notFound().build();
             }
+            SinaisVitais sinaisVitais = optionalSinais.get();
 
-            if (sinaisForm.getFreqRespiratoria() != null) {
-                sinaisVitais.setFreqRespiratoria(sinaisForm.getFreqRespiratoria());
-            }
-
-            if (sinaisForm.getPressaoArterial() != null) {
-                sinaisVitais.setPressaoArterial(sinaisForm.getPressaoArterial());
-            }
-
-            if (sinaisForm.getConstipacao() != null) {
-                sinaisVitais.setConstipacao(sinaisForm.getConstipacao());
-            }
-
-            if (sinaisForm.getGlicemia() != null) {
-                sinaisVitais.setGlicemia(sinaisForm.getGlicemia());
-            }
-
-            if (sinaisForm.getTemperatura() != null) {
-                sinaisVitais.setTemperatura(sinaisForm.getTemperatura());
-            }
-
-            if (sinaisForm.getOxigenacao() != null) {
-                sinaisVitais.setOxigenacao(sinaisForm.getOxigenacao());
-            }
-
-            if (sinaisForm.getPeso() != null) {
-                sinaisVitais.setPeso(sinaisForm.getPeso());
-            }
-
-            if (sinaisForm.getMobilidade() != null) {
-                sinaisVitais.setMobilidade(sinaisForm.getMobilidade());
-            }
-
-            if (sinaisForm.getObservacoes() != null) {
-                sinaisVitais.setObservacoes(sinaisForm.getObservacoes());
-            }
+            sinaisVitais.atualizar(sinaisForm);
 
             SinaisVitais updatedSinais = sinaisVitaisRepository.save(sinaisVitais);
-            return new ResponseEntity<>(updatedSinais, HttpStatus.OK);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            return ResponseEntity.ok(updatedSinais);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

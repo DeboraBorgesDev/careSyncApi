@@ -3,6 +3,7 @@ package br.ufsm.csi.CareSync.models;
 import java.util.Date;
 import java.util.UUID;
 
+import br.ufsm.csi.CareSync.forms.SinaisForm;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -89,4 +90,36 @@ public class SinaisVitais {
 
     public SinaisVitais() {}
 
+      public void atualizar(SinaisForm sinaisForm) {
+        if (sinaisForm.getFreqCardiaca() != null) {
+            this.freqCardiaca = sinaisForm.getFreqCardiaca();
+        }
+        if (sinaisForm.getFreqRespiratoria() != null) {
+            this.freqRespiratoria = sinaisForm.getFreqRespiratoria();
+        }
+        if (sinaisForm.getPressaoArterial() != null) {
+            this.pressaoArterial = sinaisForm.getPressaoArterial();
+        }
+        if (sinaisForm.getConstipacao() != null) {
+            this.constipacao = sinaisForm.getConstipacao();
+        }
+        if (sinaisForm.getGlicemia() != null) {
+            this.glicemia = sinaisForm.getGlicemia();
+        }
+        if (sinaisForm.getTemperatura() != null) {
+            this.temperatura = sinaisForm.getTemperatura();
+        }
+        if (sinaisForm.getOxigenacao() != null) {
+            this.oxigenacao = sinaisForm.getOxigenacao();
+        }
+        if (sinaisForm.getPeso() != null) {
+            this.peso = sinaisForm.getPeso();
+        }
+        if (sinaisForm.getMobilidade() != null) {
+            this.mobilidade = sinaisForm.getMobilidade();
+        }
+        if (sinaisForm.getObservacoes() != null) {
+            this.observacoes = sinaisForm.getObservacoes();
+        }
+    }
 }
