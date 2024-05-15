@@ -3,6 +3,7 @@ package br.ufsm.csi.CareSync.forms;
 
 import java.util.Date;
 
+import br.ufsm.csi.CareSync.models.Paciente;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -47,4 +48,18 @@ public class PacienteForm {
 
     @Size(max = 50)
     private String nivelEnsino;
+
+      public Paciente toPaciente() {
+        Paciente paciente = new Paciente();
+        paciente.setNome(this.nome);
+        paciente.setDataNascimento(this.dataNascimento);
+        paciente.setCpf(this.cpf);
+        paciente.setSexo(this.sexo);
+        paciente.setEstadoCivil(this.estadoCivil);
+        paciente.setPossuiFilhos(this.possuiFilhos);
+        paciente.setProfissao(this.profissao);
+        paciente.setReligiao(this.religiao);
+        paciente.setNivelEnsino(this.nivelEnsino);
+        return paciente;
+    }
 }

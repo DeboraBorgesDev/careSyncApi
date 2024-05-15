@@ -2,8 +2,10 @@ package br.ufsm.csi.CareSync.models;
 
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
+import br.ufsm.csi.CareSync.forms.PacienteForm;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -69,5 +71,35 @@ public class Paciente {
     }
 
     public Paciente() {}
+
+    public void atualizar(Paciente paciente, PacienteForm pacienteForm) {
+        if (pacienteForm.getNome() != null) {
+            paciente.setNome(pacienteForm.getNome());
+        }
+        if (pacienteForm.getDataNascimento() != null) {
+            paciente.setDataNascimento(pacienteForm.getDataNascimento());
+        }
+        if (pacienteForm.getCpf() != null) {
+            paciente.setCpf(pacienteForm.getCpf());
+        }
+        if (pacienteForm.getSexo() != null) {
+            paciente.setSexo(pacienteForm.getSexo());
+        }
+        if (pacienteForm.getEstadoCivil() != null) {
+            paciente.setEstadoCivil(pacienteForm.getEstadoCivil());
+        }
+        if (pacienteForm.getPossuiFilhos() != null && !Objects.equals(pacienteForm.getPossuiFilhos(), paciente.getPossuiFilhos())) {
+            paciente.setPossuiFilhos(pacienteForm.getPossuiFilhos());
+        }
+        if (pacienteForm.getProfissao() != null) {
+            paciente.setProfissao(pacienteForm.getProfissao());
+        }
+        if (pacienteForm.getReligiao() != null) {
+            paciente.setReligiao(pacienteForm.getReligiao());
+        }
+        if (pacienteForm.getNivelEnsino() != null) {
+            paciente.setNivelEnsino(pacienteForm.getNivelEnsino());
+        }
+    }
 
 }
