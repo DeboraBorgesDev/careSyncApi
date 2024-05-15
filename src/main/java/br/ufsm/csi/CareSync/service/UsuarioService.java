@@ -1,6 +1,9 @@
 package br.ufsm.csi.CareSync.service;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +20,6 @@ import br.ufsm.csi.CareSync.models.Usuario;
 import br.ufsm.csi.CareSync.repository.PermissaoRepository;
 import br.ufsm.csi.CareSync.repository.UsuarioRepository;
 
-
-import java.util.*;
-
 import jakarta.transaction.Transactional;
 
 @Service
@@ -33,107 +33,54 @@ public class UsuarioService {
 
     @Transactional
     public ResponseEntity<?> newUser(UsuarioForm userForm, UriComponentsBuilder uriComponentsBuilder, BindingResult bindingResult) {
+
         if (usuarioRepository.existsByEmail(userForm.getEmail())) {
-            throw new EmailException(userForm.getEmail());
+            throw new EmailException("O e-mail já está em uso");
         }
-  
+
         if (usuarioRepository.existsByCpf(userForm.getCpf())) {
-            throw new CpfException(userForm.getCpf());
+            throw new CpfException("O CPF já está cadastrado");
         }
 
         UUID permissaoUuid = UUID.fromString(userForm.getPermissao());
-  
-      Permissao permissao = permissaoRepository.findById(permissaoUuid).orElse(null);
+        Optional<Permissao> optionalPermissao = permissaoRepository.findById(permissaoUuid);
+        Permissao permissao = optionalPermissao.orElseThrow(() -> new NotFoundException("Permissão não encontrada"));
 
-      Usuario novoUsuario = new Usuario(
-              userForm.getNome(),
-              userForm.getEmail(),
-              userForm.getSenha(),
-              userForm.isMedico(),
-              userForm.getCrm(),
-              userForm.getCpf(),
-              userForm.isEnfermeiro(),
-              userForm.getCoren(),
-              userForm.isEstudante(),
-              userForm.getMatricula(),
-              permissao
-      );
+        Usuario novoUsuario = userForm.toUsuario(permissao);
 
-      try {
-          Usuario savedUser = usuarioRepository.save(novoUsuario);
-          URI uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
-          return ResponseEntity.created(uri).body(savedUser);
-      } catch (Exception e) {
-          return ResponseEntity.internalServerError().build();
-      }
-  }
+        try {
+            Usuario savedUser = usuarioRepository.save(novoUsuario);
+            URI uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
+            return ResponseEntity.created(uri).body(savedUser);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 
-  public ResponseEntity<?> editarUsuario(UUID id, UsuarioForm userForm) {
-    Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
-    UUID permissaoUuid = UUID.fromString(userForm.getPermissao());
-    if (optionalUsuario.isPresent()) {
+    public ResponseEntity<?> editarUsuario(UUID id, UsuarioForm userForm) {
+        Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
+        if (!optionalUsuario.isPresent()) {
+            return ResponseEntity.internalServerError().build();
+        }
+
         Usuario usuario = optionalUsuario.get();
-        
-         if (userForm.getNome() != null && !Objects.equals(usuario.getNome(), userForm.getNome())) {
-            usuario.setNome(userForm.getNome());
-        }
-        if (userForm.getEmail() != null && !Objects.equals(usuario.getEmail(), userForm.getEmail())) {
-            if (usuarioRepository.existsByEmail(userForm.getEmail())) {
-                throw new EmailException(userForm.getEmail());
-            } else {
-                usuario.setEmail(userForm.getEmail());
-            }
-        }
-        if (userForm.getSenha() != null && !Objects.equals(usuario.getSenha(), userForm.getSenha())) {
-            usuario.setSenha(userForm.getSenha());
-        }
-        if (!Objects.equals(usuario.isMedico(), userForm.isMedico())) {
-            usuario.setMedico(userForm.isMedico());
-        }
-        if (userForm.getCrm() != null && !Objects.equals(usuario.getCrm(), userForm.getCrm())) {
-            usuario.setCrm(userForm.getCrm());
-        }
-        if (userForm.getCpf() != null && !Objects.equals(usuario.getCpf(), userForm.getCpf())) {
-            if (usuarioRepository.existsByCpf(userForm.getCpf())) {
-                throw new CpfException(userForm.getCpf());
-            } else {
-                usuario.setCpf(userForm.getCpf());
-            }
-        }
-        if (!Objects.equals(usuario.isEnfermeiro(), userForm.isEnfermeiro())) {
-            usuario.setEnfermeiro(userForm.isEnfermeiro());
-        }
-        if (userForm.getCoren() != null && !Objects.equals(usuario.getCoren(), userForm.getCoren())) {
-            usuario.setCoren(userForm.getCoren());
-        }
-        if (!Objects.equals(usuario.isEstudante(), userForm.isEstudante())) {
-            usuario.setEstudante(userForm.isEstudante());
-        }
-        if (userForm.getMatricula() != null && !Objects.equals(usuario.getMatricula(), userForm.getMatricula())) {
-            usuario.setMatricula(userForm.getMatricula());
-        }
-        if (userForm.getPermissao() != null  && !Objects.equals(usuario.getPermissao().getId(), permissaoUuid)) {
-            Permissao permissao = permissaoRepository.findById(usuario.getPermissao().getId()).orElse(null);
-            usuario.setPermissao(permissao);
-        }
+
+        usuario.editar(userForm, usuario);
 
         try {
             Usuario savedUser = usuarioRepository.save(usuario);
             return ResponseEntity.ok(savedUser);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Falha ao editar usuário");
+            return ResponseEntity.internalServerError().build();
         }
-    } else {
-        return ResponseEntity.notFound().build();
     }
-}
-
 
     public ResponseEntity<?> deleteUsuario(UUID id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new NotFoundException("Usuário não encontrado");
+        }
+
         try {
-            if (!usuarioRepository.existsById(id)) {
-                throw new NotFoundException("Usuário não encontrado");
-            }
             usuarioRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
@@ -152,13 +99,7 @@ public class UsuarioService {
 
     public ResponseEntity<?> listarUsuarioPorId(UUID id) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
-        if (!usuarioOptional.isPresent()) {
-            throw new NotFoundException("Usuário não encontrado");
-          
-        } else {
-            Usuario usuario = usuarioOptional.get();
-            return ResponseEntity.ok(usuario);
-        }
+        return usuarioOptional.map(ResponseEntity::ok)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
     }
-    
 }

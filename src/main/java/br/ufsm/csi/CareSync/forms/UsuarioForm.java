@@ -1,6 +1,7 @@
 package br.ufsm.csi.CareSync.forms;
 
-
+import br.ufsm.csi.CareSync.models.Permissao;
+import br.ufsm.csi.CareSync.models.Usuario;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -64,5 +65,22 @@ public class UsuarioForm {
         this.matricula = matricula;
         this.permissao = permissao;
     }
-    
+
+        public Usuario toUsuario(Permissao permissao) {
+    return new Usuario(
+        this.nome,
+        this.email,
+        this.senha,
+        this.isMedico,
+        this.crm,
+        this.cpf,
+        this.isEnfermeiro,
+        this.coren,
+        this.isEstudante,
+        this.matricula,
+        permissao
+    );
+    }
+
 }
+    
