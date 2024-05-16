@@ -10,7 +10,6 @@ import br.ufsm.csi.CareSync.repository.PacienteRepository;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,11 +34,7 @@ public class HistoriaFisiologicaService {
             }
 
             Paciente paciente = pacienteRepository.findById(historiaFisiologica.getPacienteId()).get();
-            HistoriaFisiologica historia = new HistoriaFisiologica();
-            historia.setPaciente(paciente);
-            historia.setExperienciaParto(historiaFisiologica.getExperienciaParto());
-            historia.setMetodoParto(historiaFisiologica.getMetodoParto());
-            historia.setSaudeInfancia(historiaFisiologica.getSaudeInfancia());
+            HistoriaFisiologica historia = historiaFisiologica.toHistoriaFisiologica(paciente);
     
             HistoriaFisiologica savedHistoria = historiaFisiologicaRepository.save(historia);
             return ResponseEntity.ok(savedHistoria);
@@ -56,18 +51,7 @@ public class HistoriaFisiologicaService {
             HistoriaFisiologica hf = hOptional.get();
 
             if (hOptional.isPresent()) {
-                if(historiaFisiologica.getExperienciaParto()  != null && !Objects.equals(hf.getExperienciaParto(), historiaFisiologica.getExperienciaParto())){
-                    hf.setExperienciaParto(historiaFisiologica.getExperienciaParto());
-                }
-
-                if(historiaFisiologica.getMetodoParto() != null && !Objects.equals(historiaFisiologica.getMetodoParto(), hf.getMetodoParto())){
-                    hf.setMetodoParto(historiaFisiologica.getMetodoParto());
-                }
-
-                if(historiaFisiologica.getSaudeInfancia() != null && !Objects.equals(historiaFisiologica.getSaudeInfancia(), hf.getSaudeInfancia())){
-                    hf.setSaudeInfancia(historiaFisiologica.getSaudeInfancia());
-                }
-
+                hf.atualizar(historiaFisiologica);
                 HistoriaFisiologica savedHistoria = historiaFisiologicaRepository.save(hf);
                 return ResponseEntity.ok(savedHistoria);
             } else {

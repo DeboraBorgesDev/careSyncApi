@@ -1,9 +1,11 @@
 package br.ufsm.csi.CareSync.models;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import br.ufsm.csi.CareSync.forms.HistoriafisiologicaForm;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -51,5 +53,19 @@ public class HistoriaFisiologica {
     }
 
     public HistoriaFisiologica() {}
+
+     public void atualizar(HistoriafisiologicaForm form) {
+        if (Objects.nonNull(form.getExperienciaParto())) {
+            this.experienciaParto = form.getExperienciaParto();
+        }
+
+        if (Objects.nonNull(form.getMetodoParto())) {
+            this.metodoParto = form.getMetodoParto();
+        }
+
+        if (Objects.nonNull(form.getSaudeInfancia())) {
+            this.saudeInfancia = form.getSaudeInfancia();
+        }
+    }
 
 }
