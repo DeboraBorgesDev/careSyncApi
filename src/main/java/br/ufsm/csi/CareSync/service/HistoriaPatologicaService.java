@@ -33,20 +33,7 @@ public class HistoriaPatologicaService {
         if (!pacienteOptional.isPresent()) {
             throw new NotFoundException("Paciente não encontrado");
         } else {
-            HistoricoPatologico historia = new HistoricoPatologico();
-            historia.setPaciente(pacienteOptional.get());
-            historia.setQueixaPrincipal(historiaPatologicaForm.getQueixaPrincipal());
-            historia.setHistoriaDoencaAtual(historiaPatologicaForm.getHistoriaDoencaAtual());
-            historia.setPossuiDiabetes(historiaPatologicaForm.getPossuiDiabetes());
-            historia.setPossuiHipertensao(historiaPatologicaForm.getPossuiHipertensao());
-            historia.setPossuiDislipidemia(historiaPatologicaForm.getPossuiDislipidemia());
-            historia.setMedicacaoContinua(historiaPatologicaForm.getMedicacaoContinua());
-            historia.setMedicacoes(historiaPatologicaForm.getMedicacoes());
-            historia.setInternadoAnteriormente(historiaPatologicaForm.getInternadoAnteriormente());
-            historia.setCirurgiasAnteriormente(historiaPatologicaForm.getCirurgiasAnteriormente());
-            historia.setCirurgiasAnterioresObservacoes(historiaPatologicaForm.getCirurgiasAnterioresObservacoes());
-            historia.setVacinas(historiaPatologicaForm.getVacinas());
-            historia.setAlergias(historiaPatologicaForm.getAlergias());
+            HistoricoPatologico historia = historiaPatologicaForm.toHistoricoPatologico(pacienteOptional.get());
 
             HistoricoPatologico savedHistoria = historiaPatologicaRepository.save(historia);
             return ResponseEntity.ok(savedHistoria);
@@ -90,54 +77,7 @@ public class HistoriaPatologicaService {
             HistoricoPatologico hp = hOptional.orElseThrow(() -> new NotFoundException("História patológica não encontrada."));
 
             if (hOptional.isPresent()) {
-                if (historiaPatologica.getQueixaPrincipal() != null && !Objects.equals(historiaPatologica.getQueixaPrincipal(), hp.getQueixaPrincipal())) {
-                    hp.setQueixaPrincipal(historiaPatologica.getQueixaPrincipal());
-
-                }
-
-                if (historiaPatologica.getHistoriaDoencaAtual() != null && !Objects.equals(historiaPatologica.getHistoriaDoencaAtual(), hp.getHistoriaDoencaAtual())) {
-                    hp.setHistoriaDoencaAtual(historiaPatologica.getHistoriaDoencaAtual());
-                }
-
-                if (!Objects.equals(historiaPatologica.getPossuiDiabetes(), hp.getPossuiDiabetes()) && historiaPatologica.getPossuiDiabetes() != null) {
-                    hp.setPossuiDiabetes(historiaPatologica.getPossuiDiabetes());
-                }
-
-                if (!Objects.equals(historiaPatologica.getPossuiHipertensao(), hp.getPossuiHipertensao()) && historiaPatologica.getPossuiHipertensao() != null) {
-                    hp.setPossuiHipertensao(historiaPatologica.getPossuiHipertensao());
-                }
-
-                if (!Objects.equals(historiaPatologica.getPossuiDislipidemia(), hp.getPossuiDislipidemia()) && historiaPatologica.getPossuiDislipidemia() != null) {
-                    hp.setPossuiDislipidemia(historiaPatologica.getPossuiDislipidemia());
-                }
-
-                if (!Objects.equals(historiaPatologica.getMedicacaoContinua(), hp.getMedicacaoContinua()) && historiaPatologica.getMedicacaoContinua() != null) {
-                    hp.setMedicacaoContinua(historiaPatologica.getMedicacaoContinua());
-                }
-
-                if (!Objects.equals(historiaPatologica.getMedicacoes(), hp.getMedicacoes())) {
-                    hp.setMedicacoes(historiaPatologica.getMedicacoes());
-                }
-
-                if (!Objects.equals(historiaPatologica.getInternadoAnteriormente(), hp.getInternadoAnteriormente()) && historiaPatologica.getInternadoAnteriormente() != null) {
-                    hp.setInternadoAnteriormente(historiaPatologica.getInternadoAnteriormente());
-                }
-
-                if (!Objects.equals(historiaPatologica.getCirurgiasAnteriormente(), hp.getCirurgiasAnteriormente()) && historiaPatologica.getCirurgiasAnteriormente() != null) {
-                    hp.setCirurgiasAnteriormente(historiaPatologica.getCirurgiasAnteriormente());
-                }
-
-                if (!Objects.equals(historiaPatologica.getCirurgiasAnterioresObservacoes(), hp.getCirurgiasAnterioresObservacoes())) {
-                    hp.setCirurgiasAnterioresObservacoes(historiaPatologica.getCirurgiasAnterioresObservacoes());
-                }
-
-                if (!Objects.equals(historiaPatologica.getVacinas(), hp.getVacinas())) {
-                    hp.setVacinas(historiaPatologica.getVacinas());
-                }
-
-                if (!Objects.equals(historiaPatologica.getAlergias(), hp.getAlergias())) {
-                    hp.setAlergias(historiaPatologica.getAlergias());
-                }
+                atualizar(historiaPatologica, hp);
 
                 HistoricoPatologico savedHistoria = historiaPatologicaRepository.save(hp);
                 return ResponseEntity.ok(savedHistoria);
@@ -146,10 +86,57 @@ public class HistoriaPatologicaService {
                 throw new NotFoundException("História Patológica não encontrada");
             }
         } catch (Exception e) {
-            throw new GenericException("");
+            throw new GenericException("Falha ao editar história");
         }
     }
 
-
+    private void atualizar(HistoriaPatologicaForm historiaPatologicaForm, HistoricoPatologico historicoPatologico) {
+        if (historiaPatologicaForm.getQueixaPrincipal() != null && !Objects.equals(historiaPatologicaForm.getQueixaPrincipal(), historicoPatologico.getQueixaPrincipal())) {
+            historicoPatologico.setQueixaPrincipal(historiaPatologicaForm.getQueixaPrincipal());
+        }
     
+        if (historiaPatologicaForm.getHistoriaDoencaAtual() != null && !Objects.equals(historiaPatologicaForm.getHistoriaDoencaAtual(), historicoPatologico.getHistoriaDoencaAtual())) {
+            historicoPatologico.setHistoriaDoencaAtual(historiaPatologicaForm.getHistoriaDoencaAtual());
+        }
+    
+        if (!Objects.equals(historiaPatologicaForm.getPossuiDiabetes(), historicoPatologico.getPossuiDiabetes())) {
+            historicoPatologico.setPossuiDiabetes(historiaPatologicaForm.getPossuiDiabetes());
+        }
+    
+        if (!Objects.equals(historiaPatologicaForm.getPossuiHipertensao(), historicoPatologico.getPossuiHipertensao())) {
+            historicoPatologico.setPossuiHipertensao(historiaPatologicaForm.getPossuiHipertensao());
+        }
+    
+        if ( !Objects.equals(historiaPatologicaForm.getPossuiDislipidemia(), historicoPatologico.getPossuiDislipidemia())) {
+            historicoPatologico.setPossuiDislipidemia(historiaPatologicaForm.getPossuiDislipidemia());
+        }
+    
+        if (!Objects.equals(historiaPatologicaForm.getMedicacaoContinua(), historicoPatologico.getMedicacaoContinua())) {
+            historicoPatologico.setMedicacaoContinua(historiaPatologicaForm.getMedicacaoContinua());
+        }
+    
+        if (historiaPatologicaForm.getMedicacoes() != null && !Objects.equals(historiaPatologicaForm.getMedicacoes(), historicoPatologico.getMedicacoes())) {
+            historicoPatologico.setMedicacoes(historiaPatologicaForm.getMedicacoes());
+        }
+    
+        if (!Objects.equals(historiaPatologicaForm.getInternadoAnteriormente(), historicoPatologico.getInternadoAnteriormente())) {
+            historicoPatologico.setInternadoAnteriormente(historiaPatologicaForm.getInternadoAnteriormente());
+        }
+    
+        if (!Objects.equals(historiaPatologicaForm.getCirurgiasAnteriormente(), historicoPatologico.getCirurgiasAnteriormente())) {
+            historicoPatologico.setCirurgiasAnteriormente(historiaPatologicaForm.getCirurgiasAnteriormente());
+        }
+    
+        if (historiaPatologicaForm.getCirurgiasAnterioresObservacoes() != null && !Objects.equals(historiaPatologicaForm.getCirurgiasAnterioresObservacoes(), historicoPatologico.getCirurgiasAnterioresObservacoes())) {
+            historicoPatologico.setCirurgiasAnterioresObservacoes(historiaPatologicaForm.getCirurgiasAnterioresObservacoes());
+        }
+    
+        if (historiaPatologicaForm.getVacinas() != null && !Objects.equals(historiaPatologicaForm.getVacinas(), historicoPatologico.getVacinas())) {
+            historicoPatologico.setVacinas(historiaPatologicaForm.getVacinas());
+        }
+    
+        if (historiaPatologicaForm.getAlergias() != null && !Objects.equals(historiaPatologicaForm.getAlergias(), historicoPatologico.getAlergias())) {
+            historicoPatologico.setAlergias(historiaPatologicaForm.getAlergias());
+        }
+    } 
 }
