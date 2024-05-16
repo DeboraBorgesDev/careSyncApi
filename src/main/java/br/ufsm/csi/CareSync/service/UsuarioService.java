@@ -33,22 +33,21 @@ public class UsuarioService {
 
     @Transactional
     public ResponseEntity<?> newUser(UsuarioForm userForm, UriComponentsBuilder uriComponentsBuilder, BindingResult bindingResult) {
-
-        if (usuarioRepository.existsByEmail(userForm.getEmail())) {
-            throw new EmailException("O e-mail já está em uso");
-        }
-
-        if (usuarioRepository.existsByCpf(userForm.getCpf())) {
-            throw new CpfException("O CPF já está cadastrado");
-        }
-
-        UUID permissaoUuid = UUID.fromString(userForm.getPermissao());
-        Optional<Permissao> optionalPermissao = permissaoRepository.findById(permissaoUuid);
-        Permissao permissao = optionalPermissao.orElseThrow(() -> new NotFoundException("Permissão não encontrada"));
-
-        Usuario novoUsuario = userForm.toUsuario(permissao);
-
         try {
+            if (usuarioRepository.existsByEmail(userForm.getEmail())) {
+                throw new EmailException("O e-mail já está em uso");
+            }
+    
+            if (usuarioRepository.existsByCpf(userForm.getCpf())) {
+                throw new CpfException("O CPF já está cadastrado");
+            }
+    
+            UUID permissaoUuid = UUID.fromString(userForm.getPermissao());
+            Optional<Permissao> optionalPermissao = permissaoRepository.findById(permissaoUuid);
+            Permissao permissao = optionalPermissao.orElseThrow(() -> new NotFoundException("Permissão não encontrada"));
+    
+            Usuario novoUsuario = userForm.toUsuario(permissao);
+
             Usuario savedUser = usuarioRepository.save(novoUsuario);
             URI uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
             return ResponseEntity.created(uri).body(savedUser);
@@ -58,16 +57,16 @@ public class UsuarioService {
     }
 
     public ResponseEntity<?> editarUsuario(UUID id, UsuarioForm userForm) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
-        if (!optionalUsuario.isPresent()) {
-            return ResponseEntity.internalServerError().build();
-        }
-
-        Usuario usuario = optionalUsuario.get();
-
-        usuario.editar(userForm, usuario);
-
         try {
+            Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
+            if (!optionalUsuario.isPresent()) {
+                return ResponseEntity.internalServerError().build();
+            }
+    
+            Usuario usuario = optionalUsuario.get();
+    
+            usuario.editar(userForm, usuario);
+    
             Usuario savedUser = usuarioRepository.save(usuario);
             return ResponseEntity.ok(savedUser);
         } catch (Exception e) {
@@ -76,11 +75,11 @@ public class UsuarioService {
     }
 
     public ResponseEntity<?> deleteUsuario(UUID id) {
-        if (!usuarioRepository.existsById(id)) {
-            throw new NotFoundException("Usuário não encontrado");
-        }
-
         try {
+            if (!usuarioRepository.existsById(id)) {
+                throw new NotFoundException("Usuário não encontrado");
+            }
+
             usuarioRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
@@ -98,8 +97,15 @@ public class UsuarioService {
     }
 
     public ResponseEntity<?> listarUsuarioPorId(UUID id) {
-        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
-        return usuarioOptional.map(ResponseEntity::ok)
-                .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
+        try {
+            
+            Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+            return usuarioOptional.map(ResponseEntity::ok)
+                    .orElseThrow(() -> new NotFoundException("Usuário não encontrado"));
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+        
     }
 }

@@ -2,7 +2,6 @@ package br.ufsm.csi.CareSync.controllers;
 
 
 import br.ufsm.csi.CareSync.forms.PacienteForm;
-import br.ufsm.csi.CareSync.models.Paciente;
 import br.ufsm.csi.CareSync.service.PacienteService;
 import jakarta.validation.Valid;
 
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -27,7 +25,7 @@ public class PacienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Paciente>> listarPacientes() {
+    public ResponseEntity<?> listarPacientes() {
         return pacienteService.listarPacientes();
     }
 

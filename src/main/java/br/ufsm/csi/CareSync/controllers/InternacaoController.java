@@ -27,7 +27,7 @@ public class InternacaoController {
     private InternacaoService internacaoService;
 
     @PostMapping("/criar")
-    public ResponseEntity<Internacao> criarInternacao(@RequestBody @Valid InternacaoForm internacaoForm) {
+    public ResponseEntity<?> criarInternacao(@RequestBody @Valid InternacaoForm internacaoForm) {
         return internacaoService.criarInternacao(internacaoForm);
     }
 
@@ -53,7 +53,7 @@ public class InternacaoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Internacao> atualizarInternacao(@PathVariable("id") UUID id, @RequestBody  InternacaoForm internacaoForm) {
+    public ResponseEntity<?> atualizarInternacao(@PathVariable("id") UUID id, @RequestBody  InternacaoForm internacaoForm) {
         return internacaoService.atualizarInternacao(id, internacaoForm);
     }
 

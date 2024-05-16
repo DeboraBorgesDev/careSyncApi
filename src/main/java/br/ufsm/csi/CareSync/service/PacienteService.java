@@ -25,50 +25,54 @@ public class PacienteService {
 
     @Transactional
     public ResponseEntity<?> criarPaciente(PacienteForm pacienteForm, UriComponentsBuilder uriComponentsBuilder) {
-        if (pacienteRepository.existsByCpf(pacienteForm.getCpf())) {
-            throw new CpfException(pacienteForm.getCpf());
-        }
-
-        Paciente paciente = pacienteForm.toPaciente();
-
         try {
+            if (pacienteRepository.existsByCpf(pacienteForm.getCpf())) {
+                throw new CpfException(pacienteForm.getCpf());
+            }
+    
+            Paciente paciente = pacienteForm.toPaciente();
+            
             Paciente savedPaciente = pacienteRepository.save(paciente);
             URI uri = uriComponentsBuilder.path("/paciente/{id}").buildAndExpand(savedPaciente.getId()).toUri();
             return ResponseEntity.created(uri).body(savedPaciente);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.internalServerError().body("Erro ao criar paciente");
         }
     }
 
-    public ResponseEntity<List<Paciente>> listarPacientes() {
+    public ResponseEntity<?> listarPacientes() {
         try {
             List<Paciente> pacientes = pacienteRepository.findAll();
             return ResponseEntity.ok(pacientes);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.internalServerError().body("Erro ao listar pacientes");
         }
     }
 
     public ResponseEntity<?> buscarPacientePorId(UUID id) {
-        Optional<Paciente> pacienteOptional = pacienteRepository.findById(id);
-        if (pacienteOptional.isEmpty()) {
-            throw new NotFoundException("Paciente não encontrado");
+        try {
+            Optional<Paciente> pacienteOptional = pacienteRepository.findById(id);
+            if (pacienteOptional.isEmpty()) {
+                throw new NotFoundException("Paciente não encontrado");
+            }
+            Paciente paciente = pacienteOptional.get();
+            return ResponseEntity.ok(paciente);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro ao buscar paciente por ID");
         }
-        Paciente paciente = pacienteOptional.get();
-        return ResponseEntity.ok(paciente);
     }
 
     @Transactional
     public ResponseEntity<?> editarPaciente(UUID id, PacienteForm pacienteForm) {
-        Optional<Paciente> optionalPaciente = pacienteRepository.findById(id);
-        if (optionalPaciente.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Paciente paciente = optionalPaciente.get();
-        paciente.atualizar(paciente, pacienteForm);
-
         try {
+            Optional<Paciente> optionalPaciente = pacienteRepository.findById(id);
+            if (optionalPaciente.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Paciente paciente = optionalPaciente.get();
+            paciente.atualizar(paciente, pacienteForm);
+
             Paciente savedPaciente = pacienteRepository.save(paciente);
             return ResponseEntity.ok(savedPaciente);
         } catch (Exception e) {
@@ -85,7 +89,7 @@ public class PacienteService {
             pacienteRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.internalServerError().body("Erro ao deletar paciente");
         }
     }
 }

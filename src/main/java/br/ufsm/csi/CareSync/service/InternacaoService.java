@@ -25,66 +25,98 @@ public class InternacaoService {
     private UsuarioRepository usuarioRepository;
 
     public ResponseEntity<?> criarInternacao(InternacaoForm internacaoForm) {
-        Internacao internacao = toInternacao(internacaoForm);
+        try {
+            Internacao internacao = toInternacao(internacaoForm);
 
-        if (internacao.getMedico() != null && !internacao.getMedico().isMedico()) {
-            return ResponseEntity.badRequest().body("O usuário não é um médico.");
+            if (internacao.getMedico() != null && !internacao.getMedico().isMedico()) {
+                return ResponseEntity.badRequest().body("O usuário não é um médico.");
+            }
+
+            internacaoRepository.save(internacao);
+
+            URI location = URI.create("/internacoes/" + internacao.getId());
+            return ResponseEntity.created(location).body(internacao);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro ao criar internação");
         }
-
-        internacaoRepository.save(internacao);
-
-        URI location = URI.create("/internacoes/" + internacao.getId());
-        return ResponseEntity.created(location).body(internacao);
     }
 
     public ResponseEntity<Internacao> buscarInternacaoPorId(UUID id) {
-        return internacaoRepository.findById(id)
-                .map(internacao -> ResponseEntity.ok().body(internacao))
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            return internacaoRepository.findById(id)
+                    .map(internacao -> ResponseEntity.ok().body(internacao))
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     public ResponseEntity<List<Internacao>> listarInternacoes() {
-        List<Internacao> internacoes = internacaoRepository.findAll();
-        return ResponseEntity.ok().body(internacoes);
+        try {
+            List<Internacao> internacoes = internacaoRepository.findAll();
+            return ResponseEntity.ok().body(internacoes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     public ResponseEntity<List<Internacao>> listarInternacoesByPaciente(UUID id) {
-        List<Internacao> internacoes = internacaoRepository.findByIdPaciente(id);
-        return ResponseEntity.ok().body(internacoes);
+        try {
+            List<Internacao> internacoes = internacaoRepository.findByIdPaciente(id);
+            return ResponseEntity.ok().body(internacoes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     public ResponseEntity<List<Internacao>> listarInternacoesByMedico(UUID id) {
-        List<Internacao> internacoes = internacaoRepository.findByIdMedico(id);
-        return ResponseEntity.ok().body(internacoes);
+        try {
+            List<Internacao> internacoes = internacaoRepository.findByIdMedico(id);
+            return ResponseEntity.ok().body(internacoes);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
-    public ResponseEntity<Internacao> atualizarInternacao(UUID id, InternacaoForm internacaoForm) {
-        return internacaoRepository.findById(id)
-                .map(internacao -> {
-                    atualizar(internacao, internacaoForm);
-                    internacaoRepository.save(internacao);
-                    return ResponseEntity.ok(internacao);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> atualizarInternacao(UUID id, InternacaoForm internacaoForm) {
+        try {
+            return internacaoRepository.findById(id)
+                    .map(internacao -> {
+                        atualizar(internacao, internacaoForm);
+                        internacaoRepository.save(internacao);
+                        return ResponseEntity.ok(internacao);
+                    })
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erro ao atualizar internação");
+        }
     }
 
     public ResponseEntity<Void> deletarInternacao(UUID id) {
-        if (internacaoRepository.existsById(id)) {
-            internacaoRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+        try {
+            if (internacaoRepository.existsById(id)) {
+                internacaoRepository.deleteById(id);
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     public ResponseEntity<?> darAlta(UUID id) {
-        return internacaoRepository.findById(id)
-                .map(internacao -> {
-                    internacao.setDataSaida(java.time.LocalDateTime.now());
-                    internacaoRepository.save(internacao);
-                    return ResponseEntity.ok().body(internacao);
-                })
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            return internacaoRepository.findById(id)
+                    .map(internacao -> {
+                        internacao.setDataSaida(LocalDateTime.now());
+                        internacaoRepository.save(internacao);
+                        return ResponseEntity.ok().body(internacao);
+                    })
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     private Internacao toInternacao(InternacaoForm form) {

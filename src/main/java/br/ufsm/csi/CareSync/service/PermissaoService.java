@@ -23,17 +23,25 @@ public class PermissaoService {
     private PermissaoRepository permissaoRepository;
 
     public ResponseEntity<List<Permissao>> listarPermissoes() {
-        List<Permissao> permissoes = permissaoRepository.findAll();
-        return ResponseEntity.ok(permissoes);
+        try {
+            List<Permissao> permissoes = permissaoRepository.findAll();
+            return ResponseEntity.ok(permissoes);
+        } catch (Exception e) {
+            throw new GenericException("Erro ao listar permissões");
+        }
     }
 
     public ResponseEntity<Permissao> buscarPermissaoPorId(UUID id) {
-        Optional<Permissao> permissaoOptional = permissaoRepository.findById(id);
-        if (permissaoOptional.isEmpty()) {
-            throw new NotFoundException("Permissão não encontrada");
+        try {
+            Optional<Permissao> permissaoOptional = permissaoRepository.findById(id);
+            if (permissaoOptional.isEmpty()) {
+                throw new NotFoundException("Permissão não encontrada");
+            }
+            Permissao permissao = permissaoOptional.get();
+            return ResponseEntity.ok(permissao);
+        } catch (Exception e) {
+            throw new GenericException("Erro ao buscar permissão por ID");
         }
-        Permissao permissao = permissaoOptional.get();
-        return ResponseEntity.ok(permissao);
     }
 
     @Transactional
@@ -49,22 +57,30 @@ public class PermissaoService {
 
     @Transactional
     public ResponseEntity<Permissao> editarPermissao(UUID id, String nome) {
-        Optional<Permissao> permissaoOptional = permissaoRepository.findById(id);
-        if (permissaoOptional.isEmpty()) {
-            throw new NotFoundException("Permissão não encontrada");
+        try {
+            Optional<Permissao> permissaoOptional = permissaoRepository.findById(id);
+            if (permissaoOptional.isEmpty()) {
+                throw new NotFoundException("Permissão não encontrada");
+            }
+            Permissao permissao = permissaoOptional.get();
+            permissao.setNome(nome);
+            Permissao permissaoAtualizada = permissaoRepository.save(permissao);
+            return ResponseEntity.ok(permissaoAtualizada);
+        } catch (Exception e) {
+            throw new GenericException("Erro ao editar permissão");
         }
-        Permissao permissao = permissaoOptional.get();
-        permissao.setNome(nome);
-        Permissao permissaoAtualizada = permissaoRepository.save(permissao);
-        return ResponseEntity.ok(permissaoAtualizada);
     }
 
     @Transactional
     public ResponseEntity<Void> deletarPermissao(UUID id) {
-        if (!permissaoRepository.existsById(id)) {
-            throw new NotFoundException("Permissão não encontrada");
+        try {
+            if (!permissaoRepository.existsById(id)) {
+                throw new NotFoundException("Permissão não encontrada");
+            }
+            permissaoRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            throw new GenericException("Erro ao deletar permissão");
         }
-        permissaoRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
     }
 }
