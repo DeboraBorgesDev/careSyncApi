@@ -2,13 +2,7 @@ package br.ufsm.csi.CareSync.models;
 
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import br.ufsm.csi.CareSync.exceptions.NotFoundException;
-import br.ufsm.csi.CareSync.forms.UsuarioForm;
-import br.ufsm.csi.CareSync.repository.PermissaoRepository;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -66,9 +60,6 @@ public class Usuario {
     @JoinColumn(name = "id_permissao")
     private Permissao permissao;
 
-    @Autowired
-    private PermissaoRepository permissaoRepository;
-
     public Usuario( String nome, String email, String senha, boolean isMedico, String crm, String cpf,
             boolean isEnfermeiro, String coren, boolean isEstudante, String matricula, Permissao permissao) {
         this.nome = nome;
@@ -85,45 +76,6 @@ public class Usuario {
     }
 
     public Usuario() {
-    }
-
-    public void editar(UsuarioForm userForm, Usuario usuarioOptional) {
-        if (userForm.getNome() != null) {
-            this.nome = userForm.getNome();
-        }
-        if (userForm.getEmail() != null) {
-            this.email = userForm.getEmail();
-        }
-        if (userForm.getSenha() != null) {
-            this.senha = userForm.getSenha();
-        }
-        if (userForm.isMedico() != usuarioOptional.isMedico()) {
-            this.isMedico = userForm.isMedico();
-        }
-        if (userForm.getCrm() != null) {
-            this.crm = userForm.getCrm();
-        }
-        if (userForm.getCpf() != null) {
-            this.cpf = userForm.getCpf();
-        }
-        if (userForm.isEnfermeiro() != usuarioOptional.isEnfermeiro()) {
-            this.isEnfermeiro = userForm.isEnfermeiro();
-        }
-        if (userForm.getCoren() != null) {
-            this.coren = userForm.getCoren();
-        }
-        if (userForm.isEstudante() != usuarioOptional.isEstudante()) {
-            this.isEstudante = userForm.isEstudante();
-        }
-        if (userForm.getMatricula() != null) {
-            this.matricula = userForm.getMatricula();
-        }
-        if (userForm.getPermissao() != null) {
-            UUID permissaoUuid = UUID.fromString(userForm.getPermissao());
-            Permissao permissao = permissaoRepository.findById(permissaoUuid)
-                .orElseThrow(() -> new NotFoundException("Permissão não encontrada"));
-            this.permissao = permissao;
-        }
     }
     
 

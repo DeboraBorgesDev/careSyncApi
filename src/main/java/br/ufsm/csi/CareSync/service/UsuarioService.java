@@ -65,7 +65,7 @@ public class UsuarioService {
     
             Usuario usuario = optionalUsuario.get();
     
-            usuario.editar(userForm, usuario);
+            editar(userForm, usuario);
     
             Usuario savedUser = usuarioRepository.save(usuario);
             return ResponseEntity.ok(savedUser);
@@ -107,5 +107,44 @@ public class UsuarioService {
             return ResponseEntity.internalServerError().build();
         }
         
+    }
+
+    public void editar(UsuarioForm userForm, Usuario usuario) {
+        if (userForm.getNome() != null) {
+            usuario.setNome(userForm.getNome());
+        }
+        if (userForm.getEmail() != null) {
+            usuario.setEmail(userForm.getEmail());
+        }
+        if (userForm.getSenha() != null) {
+            usuario.setSenha(userForm.getSenha());
+        }
+        if (userForm.isMedico() != usuario.isMedico()) {
+            usuario.setMedico(userForm.isMedico());
+        }
+        if (userForm.getCrm() != null) {
+            usuario.setCrm(userForm.getCrm());
+        }
+        if (userForm.getCpf() != null) {
+            usuario.setCpf(userForm.getCpf());
+        }
+        if (userForm.isEnfermeiro() != usuario.isEnfermeiro()) {
+            usuario.setEnfermeiro(userForm.isEnfermeiro());
+        }
+        if (userForm.getCoren() != null) {
+            usuario.setCoren(userForm.getCoren());
+        }
+        if (userForm.isEstudante() != usuario.isEstudante()) {
+            usuario.setEstudante(userForm.isEstudante());
+        }
+        if (userForm.getMatricula() != null) {
+            usuario.setMatricula(userForm.getMatricula());
+        }
+        if (userForm.getPermissao() != null) {
+            UUID permissaoUuid = UUID.fromString(userForm.getPermissao());
+            Permissao permissao = permissaoRepository.findById(permissaoUuid)
+                .orElseThrow(() -> new NotFoundException("Permissão não encontrada"));
+            usuario.setPermissao(permissao);
+        }
     }
 }
