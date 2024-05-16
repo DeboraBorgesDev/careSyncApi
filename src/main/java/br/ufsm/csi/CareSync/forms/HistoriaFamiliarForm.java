@@ -2,6 +2,8 @@ package br.ufsm.csi.CareSync.forms;
 
 import java.util.UUID;
 
+import br.ufsm.csi.CareSync.models.HistoriaFamiliar;
+import br.ufsm.csi.CareSync.models.Paciente;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +39,22 @@ public class HistoriaFamiliarForm {
         this.filhosObservacoes = filhosObservacoes;
         this.historicoSaudeParentes = historicoSaudeParentes;
     }
+
+    public HistoriaFamiliar toHistoriaFamiliar( Paciente paciente) {
+        HistoriaFamiliar historiaFamiliar = new HistoriaFamiliar();
+        historiaFamiliar.setPaciente(paciente);
+        historiaFamiliar.setIdadeMortePai(this.idadeMortePai);
+        historiaFamiliar.setCausaMortePai(this.causaMortePai);
+        historiaFamiliar.setIdadeMorteMae(this.idadeMorteMae);
+        historiaFamiliar.setCausaMorteMae(this.causaMorteMae);
+        historiaFamiliar.setDoencasPai(this.doencasPai);
+        historiaFamiliar.setDoencasMae(this.doencasMae);
+        historiaFamiliar.setFilhosSaudaveis(this.filhosSaudaveis);
+        historiaFamiliar.setFilhosObservacoes(this.filhosObservacoes);
+        historiaFamiliar.setHistoricoSaudeParentes(this.historicoSaudeParentes);
+        return historiaFamiliar;
+    }
+
 
     
 }

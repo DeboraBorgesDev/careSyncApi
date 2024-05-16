@@ -1,7 +1,6 @@
 package br.ufsm.csi.CareSync.service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,17 +35,7 @@ public class HistoriaFamiliarService {
             Paciente paciente = pacienteRepository.findById(historiaFamiliarForm.getPacienteId())
                     .orElseThrow(() -> new NotFoundException("Paciente não encontrado"));
 
-            HistoriaFamiliar historiaFamiliar = new HistoriaFamiliar();
-            historiaFamiliar.setPaciente(paciente);
-            historiaFamiliar.setIdadeMortePai(historiaFamiliarForm.getIdadeMortePai());
-            historiaFamiliar.setCausaMortePai(historiaFamiliarForm.getCausaMortePai());
-            historiaFamiliar.setIdadeMorteMae(historiaFamiliarForm.getIdadeMorteMae());
-            historiaFamiliar.setCausaMorteMae(historiaFamiliarForm.getCausaMorteMae());
-            historiaFamiliar.setDoencasPai(historiaFamiliarForm.getDoencasPai());
-            historiaFamiliar.setDoencasMae(historiaFamiliarForm.getDoencasMae());
-            historiaFamiliar.setFilhosSaudaveis(historiaFamiliarForm.getFilhosSaudaveis());
-            historiaFamiliar.setFilhosObservacoes(historiaFamiliarForm.getFilhosObservacoes());
-            historiaFamiliar.setHistoricoSaudeParentes(historiaFamiliarForm.getHistoricoSaudeParentes());
+            HistoriaFamiliar historiaFamiliar = historiaFamiliarForm.toHistoriaFamiliar(paciente);
 
             HistoriaFamiliar savedHistoriaFamiliar = historiaFamiliarRepository.save(historiaFamiliar);
 
@@ -63,41 +52,7 @@ public class HistoriaFamiliarService {
             HistoriaFamiliar hf = hOptional.get();
 
             if (hOptional.isPresent()) {
-                if(historiaFamiliarForm.getDoencasMae()  != null && !Objects.equals(hf.getCausaMortePai(), historiaFamiliarForm.getCausaMortePai())){
-                    hf.setCausaMortePai(historiaFamiliarForm.getCausaMortePai());
-                }
-
-                if(historiaFamiliarForm.getDoencasPai() != null && !Objects.equals(historiaFamiliarForm.getDoencasPai(), hf.getDoencasPai())){
-                    hf.setDoencasPai(historiaFamiliarForm.getDoencasPai());
-                }
-
-                if(historiaFamiliarForm.getIdadeMorteMae() != null && !Objects.equals(historiaFamiliarForm.getIdadeMortePai(), hf.getIdadeMortePai())){
-                    hf.setIdadeMortePai(historiaFamiliarForm.getIdadeMortePai());
-                }
-
-                if(historiaFamiliarForm.getDoencasMae()  != null && !Objects.equals(hf.getCausaMorteMae(), historiaFamiliarForm.getCausaMorteMae())){
-                    hf.setCausaMorteMae(historiaFamiliarForm.getCausaMorteMae());
-                }
-
-                if(historiaFamiliarForm.getDoencasMae() != null && !Objects.equals(historiaFamiliarForm.getDoencasMae(), hf.getDoencasMae())){
-                    hf.setDoencasMae(historiaFamiliarForm.getDoencasMae());
-                }
-
-                if(historiaFamiliarForm.getIdadeMorteMae() != null && !Objects.equals(historiaFamiliarForm.getIdadeMorteMae(), hf.getIdadeMorteMae())){
-                    hf.setIdadeMorteMae(historiaFamiliarForm.getIdadeMorteMae());
-                }
-
-                if(!Objects.equals(hf.getFilhosSaudaveis(), historiaFamiliarForm.getFilhosSaudaveis())){
-                    hf.setFilhosSaudaveis(historiaFamiliarForm.getFilhosSaudaveis());
-                }
-
-                if(historiaFamiliarForm.getFilhosObservacoes() != null && !Objects.equals(hf.getFilhosObservacoes(), historiaFamiliarForm.getFilhosObservacoes())){
-                    hf.setFilhosObservacoes(historiaFamiliarForm.getFilhosObservacoes());
-                }
-
-                if(historiaFamiliarForm.getHistoricoSaudeParentes() != null && !Objects.equals(hf.getHistoricoSaudeParentes(), historiaFamiliarForm.getHistoricoSaudeParentes())){
-                    hf.setHistoricoSaudeParentes(historiaFamiliarForm.getHistoricoSaudeParentes());
-                }
+                hf.atualizar( historiaFamiliarForm);
 
                 HistoriaFamiliar savedHistoria = historiaFamiliarRepository.save(hf);
                 return ResponseEntity.ok(savedHistoria);

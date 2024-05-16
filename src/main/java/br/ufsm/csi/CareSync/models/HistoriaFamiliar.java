@@ -1,7 +1,9 @@
 package br.ufsm.csi.CareSync.models;
 
+import java.util.Objects;
 import java.util.UUID;
 
+import br.ufsm.csi.CareSync.forms.HistoriaFamiliarForm;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -73,5 +75,44 @@ public class HistoriaFamiliar {
     }
 
     public HistoriaFamiliar() {}
+
+    public void atualizar(HistoriaFamiliarForm form) {
+        if (Objects.nonNull(form.getIdadeMortePai())) {
+            this.idadeMortePai = form.getIdadeMortePai();
+        }
+    
+        if (Objects.nonNull(form.getCausaMortePai())) {
+            this.causaMortePai = form.getCausaMortePai();
+        }
+    
+        if (Objects.nonNull(form.getIdadeMorteMae())) {
+            this.idadeMorteMae = form.getIdadeMorteMae();
+        }
+    
+        if (Objects.nonNull(form.getCausaMorteMae())) {
+            this.causaMorteMae = form.getCausaMorteMae();
+        }
+    
+        if (Objects.nonNull(form.getDoencasPai())) {
+            this.doencasPai = form.getDoencasPai();
+        }
+    
+        if (Objects.nonNull(form.getDoencasMae())) {
+            this.doencasMae = form.getDoencasMae();
+        }
+    
+        if (Objects.nonNull(form.getFilhosSaudaveis())) {
+            this.filhosSaudaveis = form.getFilhosSaudaveis();
+        }
+    
+        if (Objects.nonNull(form.getFilhosObservacoes())) {
+            this.filhosObservacoes = form.getFilhosObservacoes();
+        }
+    
+        if (Objects.nonNull(form.getHistoricoSaudeParentes())) {
+            this.historicoSaudeParentes = form.getHistoricoSaudeParentes();
+        }
+    }
+    
 
 }
