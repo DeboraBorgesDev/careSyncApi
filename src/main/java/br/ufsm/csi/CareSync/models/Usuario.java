@@ -1,6 +1,11 @@
 package br.ufsm.csi.CareSync.models;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
@@ -20,7 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "usuarios")
-public class Usuario {
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(columnDefinition = "uuid", updatable = false)
@@ -60,6 +65,8 @@ public class Usuario {
     @JoinColumn(name = "id_permissao")
     private Permissao permissao;
 
+    private String token;
+
     public Usuario( String nome, String email, String senha, boolean isMedico, String crm, String cpf,
             boolean isEnfermeiro, String coren, boolean isEstudante, String matricula, Permissao permissao) {
         this.nome = nome;
@@ -77,6 +84,50 @@ public class Usuario {
 
     public Usuario() {
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(this.permissao);
+    }
+
+    @Override
+    public String getPassword() {
+        return this.senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
+  }
     
 
     

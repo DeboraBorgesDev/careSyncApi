@@ -1,5 +1,7 @@
 package br.ufsm.csi.CareSync.forms;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import br.ufsm.csi.CareSync.models.Permissao;
 import br.ufsm.csi.CareSync.models.Usuario;
 import jakarta.validation.constraints.Email;

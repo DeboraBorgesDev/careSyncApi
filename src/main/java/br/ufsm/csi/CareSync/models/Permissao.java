@@ -3,6 +3,8 @@ package br.ufsm.csi.CareSync.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.UUID;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,7 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "permissao")
-public class Permissao {
+public class Permissao implements GrantedAuthority{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column
@@ -36,6 +38,11 @@ public class Permissao {
     }
 
     public Permissao() {
+    }
+
+    @Override
+    public String getAuthority() {
+        return this.nome;
     }
 
     
