@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -31,6 +32,9 @@ public class UsuarioService {
     @Autowired
     public UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @Transactional
     public ResponseEntity<?> newUser(UsuarioForm userForm, UriComponentsBuilder uriComponentsBuilder, BindingResult bindingResult) {
         try {
@@ -47,6 +51,7 @@ public class UsuarioService {
             Permissao permissao = optionalPermissao.orElseThrow(() -> new NotFoundException("Permissão não encontrada"));
     
             Usuario novoUsuario = userForm.toUsuario(permissao);
+            novoUsuario.setSenha(passwordEncoder.encode(userForm.getSenha()));
 
             Usuario savedUser = usuarioRepository.save(novoUsuario);
             URI uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(savedUser.getId()).toUri();
@@ -117,7 +122,7 @@ public class UsuarioService {
             usuario.setEmail(userForm.getEmail());
         }
         if (userForm.getSenha() != null) {
-            usuario.setSenha(userForm.getSenha());
+            usuario.setSenha(passwordEncoder.encode(userForm.getSenha()));
         }
         if (userForm.isMedico() != usuario.isMedico()) {
             usuario.setMedico(userForm.isMedico());

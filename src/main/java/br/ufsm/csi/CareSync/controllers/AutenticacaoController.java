@@ -35,8 +35,6 @@ public class AutenticacaoController{
 
   @PostMapping("/login")
   public ResponseEntity<Object> auth(@RequestBody AutenticacaoForm user) {
-    System.out.println(user.email());
-    System.out.println(user.senha());
     try {
       final Authentication authenticate = authenticationManager
           .authenticate(new UsernamePasswordAuthenticationToken(user.email(), user.senha()));
