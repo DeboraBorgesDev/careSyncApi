@@ -61,7 +61,7 @@ public class Usuario implements UserDetails {
     @Column(length = 20)
     private String matricula;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_permissao")
     private Permissao permissao;
 
