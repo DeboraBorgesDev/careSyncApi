@@ -83,7 +83,7 @@ public class HistoriaFamiliarService {
                 return ResponseEntity.ok(historia);
             }
         } catch (Exception e){
-            throw new GenericException("Erro ao buscar história familar");
+            throw new GenericException(e.getMessage());
         }
     }
     
