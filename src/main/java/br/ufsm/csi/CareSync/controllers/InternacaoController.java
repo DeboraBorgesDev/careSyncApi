@@ -26,7 +26,7 @@ public class InternacaoController {
     @Autowired
     private InternacaoService internacaoService;
 
-    @PostMapping("/criar")
+    @PostMapping()
     public ResponseEntity<?> criarInternacao(@RequestBody @Valid InternacaoForm internacaoForm) {
         return internacaoService.criarInternacao(internacaoForm);
     }

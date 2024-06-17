@@ -32,6 +32,11 @@ public class InternacaoService {
                 return ResponseEntity.badRequest().body("O usuário não é um médico.");
             }
 
+            boolean pacientePossuiInternacaoAtiva = internacaoRepository.existsByPacienteAndDataSaidaIsNull(internacao.getPaciente().getId());
+            if (pacientePossuiInternacaoAtiva) {
+                return ResponseEntity.badRequest().body("O paciente já possui uma internação ativa.");
+            }
+
             internacaoRepository.save(internacao);
 
             URI location = URI.create("/internacoes/" + internacao.getId());
