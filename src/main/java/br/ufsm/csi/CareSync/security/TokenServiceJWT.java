@@ -5,6 +5,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 
 import br.ufsm.csi.CareSync.models.Usuario;
 
@@ -48,4 +49,19 @@ public class TokenServiceJWT {
             throw new RuntimeException("Token inválido ou expirado");
         }
     }
+
+    public boolean isTokenExpired(String token) {
+    try {
+        Algorithm algorithm = Algorithm.HMAC256("API");
+        DecodedJWT jwt = JWT.require(algorithm)
+                .withIssuer("API")
+                .build()
+                .verify(token);
+
+        Instant expiration = jwt.getExpiresAt().toInstant();
+        return expiration.isBefore(Instant.now());
+    } catch (JWTVerificationException e) {
+        throw new RuntimeException("Token inválido ou expirado");
+    }
+}
 }
