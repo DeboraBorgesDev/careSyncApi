@@ -15,6 +15,7 @@ import br.ufsm.csi.CareSync.repository.SinaisVitaisRepository;
 import br.ufsm.csi.CareSync.repository.UsuarioRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -100,6 +101,16 @@ public class SinaisVitaisService {
             SinaisVitais updatedSinais = sinaisVitaisRepository.save(sinaisVitais);
 
             return ResponseEntity.ok(updatedSinais);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    public ResponseEntity<List<SinaisVitais>> listarTodosSinaisVitais() {
+        try {
+            List<SinaisVitais> sinais = sinaisVitaisRepository.findAll();
+            return ResponseEntity.ok(sinais);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

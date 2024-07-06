@@ -1,6 +1,6 @@
 package br.ufsm.csi.CareSync.models;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import br.ufsm.csi.CareSync.forms.SinaisForm;
@@ -37,7 +37,8 @@ public class SinaisVitais {
 
     @Column(name = "data_hora")
     
-    private Date dataHora;
+   
+    private LocalDateTime dataHora = LocalDateTime.now();
 
     @Column(name = "freq_cardiaca")
     private Integer freqCardiaca;
@@ -69,7 +70,7 @@ public class SinaisVitais {
     @Column(name = "observacoes", columnDefinition = "TEXT")
     private String observacoes;
 
-    public SinaisVitais(UUID id, Paciente paciente, Usuario profissional, Date dataHora, Integer freqCardiaca,
+    public SinaisVitais(UUID id, Paciente paciente, Usuario profissional, LocalDateTime dataHora, Integer freqCardiaca,
             Integer freqRespiratoria, String pressaoArterial, String constipacao, Float glicemia, Float temperatura,
             Float oxigenacao, Float peso, String mobilidade, String observacoes) {
         this.id = id;

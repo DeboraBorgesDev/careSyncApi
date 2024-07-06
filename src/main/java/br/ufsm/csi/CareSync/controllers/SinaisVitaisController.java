@@ -9,6 +9,7 @@ import br.ufsm.csi.CareSync.service.SinaisVitaisService;
 import jakarta.validation.Valid;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,6 +22,11 @@ public class SinaisVitaisController {
     @PostMapping("/registrar")
     public ResponseEntity<SinaisVitais> registrarSinais(@RequestBody @Valid SinaisForm sinaisForm) {
         return sinaisVitaisService.registrarSinais(sinaisForm);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<SinaisVitais>> listarSinais() {
+        return sinaisVitaisService.listarTodosSinaisVitais();
     }
 
     @GetMapping("/paciente/{id}")
